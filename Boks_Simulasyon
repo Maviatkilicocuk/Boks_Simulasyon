@@ -1,0 +1,159 @@
+Main Class
+
+package Boks_Simulasyon;
+
+public class Main {
+    public static void main(String[] args) {
+        Figther f1 = new Figther("Enver", 28, 150, 60,0,"yazi");
+        Figther f2 = new Figther("Zülal",25,150,60,120,"tura");
+
+        Match match = new Match(f1,f2,65,55);
+        match.run();
+    }
+}
+
+======================================================================
+
+Match Class
+
+package Boks_Simulasyon;
+
+public class Match {
+
+    Figther f1;
+    Figther f2;
+    int maxweight;
+    int minweight;
+    int dodge;
+    String change;
+
+
+    Match(Figther f1, Figther f2, int maxweight, int minweight){
+        this.f1 = f1;
+        this.f2 = f2;
+        this.maxweight = maxweight;
+        this.minweight = minweight;
+        this.dodge = dodge;
+    }
+    void run() {
+        double randomNumber = Math.random() * 100;
+        if (randomNumber > 50) {
+            this.change = "tura";
+        } else {
+            this.change = "yazi";
+        }
+        if (this.f1.luck == this.change) {
+            System.out.println(this.change + " çıktığı için " + this.f1.name + " maça başlıyor.");
+            if (isCheck()) {
+                while (this.f1.health > 0 && this.f2.health > 0) {
+
+                    System.out.println("======= YENİ RAUND =======");
+                    this.f2.health = this.f1.hit(this.f2);
+                    if (isWin()) {
+                        break;
+                    }
+                    System.out.println(this.f2.name + " sağlık = " + this.f2.health);
+
+                    this.f1.health = this.f2.hit(this.f1);
+                    if (isWin()) {
+                        break;
+                    }
+                    System.out.println(this.f1.name + " sağlık = " + this.f1.health);
+                }
+
+            } else {
+                System.out.println("Sporcuların ağırlıkları uyumsuz.");
+            }
+        }else {
+            System.out.println(this.change + " çıktığı için " + this.f2.name + " maça başlıyor.");
+            if (isCheck()) {
+                while (this.f2.health > 0 && this.f1.health > 0) {
+
+                    System.out.println("======= YENİ RAUND =======");
+                    this.f1.health = this.f2.hit(this.f1);
+                    if (isWin()) {
+                        break;
+                    }
+                    System.out.println(this.f2.name + " sağlık = " + this.f2.health);
+
+                    this.f2.health = this.f1.hit(this.f2);
+                    if (isWin()) {
+                        break;
+                    }
+                    System.out.println(this.f2.name + " sağlık = " + this.f2.health);
+                }
+
+            } else {
+                System.out.println("Sporcuların ağırlıkları uyumsuz.");
+            }
+        }
+    }
+
+    boolean isCheck(){
+        return (this.f1.weight >= minweight && this.f1.weight <= maxweight && this.f2.weight >= minweight && this.f2.weight <= maxweight);
+    }
+
+    boolean isWin(){
+        if (this.f1.health <= 0){
+            System.out.println(this.f2.name+ " kazandı.");
+            return true;
+        }
+        if (this.f2.health <= 0){
+            System.out.println(this.f1.name + " kazandı.");
+            return true;
+        }
+        return false;
+    }
+}
+
+
+======================================================================
+
+Fighter Class
+
+package Boks_Simulasyon;
+
+public class Figther {
+    String name;
+    int damage;
+    int health;
+    int weight;
+    int dodge;
+    String luck;
+
+    Figther (String name, int damage, int health, int weight,int dodge,String luck){
+        this.name = name;
+        this.damage = damage;
+        this.health = health;
+        this.weight = weight;
+        if (dodge <= 100 && dodge >=0 ){
+            this.dodge = dodge;
+        }else{
+            System.out.println("Dodge değerini yanlış girdin. " +Figther.this.name + " Hazır ol. Hasarları yeme vakti!");
+            this.dodge = 0;
+        }
+
+
+    }
+
+    int hit(Figther foe){
+        System.out.println(this.name + " => " + foe.name + " " + this.damage + " hasar vurdu.");
+        if (foe.isDodge()){
+            System.out.println(foe.name + " hasarı engelledi.");
+            return foe.health;
+        }
+        if (foe.health - this.damage < 0){
+            return 0;
+        }
+        return foe.health - this.damage;
+    }
+
+
+    boolean isDodge(){
+        double randomNumber = Math.random() * 100;
+        return randomNumber < this.dodge;
+    }
+}
+
+
+======================================================================
